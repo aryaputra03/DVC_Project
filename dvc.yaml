@@ -1,0 +1,45 @@
+stages:
+  preprocess:
+    cmd: python src/preprocess.py --input data/raw/dataset.csv --output data/processed/dataset_cleaned.csv
+    deps:
+      - src/preprocess.py
+      - data/raw/dataset.csv
+    params:
+      - preprocessing.missing_value_strategy_numerical
+      - preprocessing.missing_value_strategy_categorical
+      - preprocessing.skewed_features
+      - preprocessing.skew_threshold
+      - preprocessing.scale_features
+      - preprocessing.remove_outliers
+    outs:
+      - data/processed/dataset_cleaned.csv
+  
+train:
+  cmd: python src/train.py --input data/processed/dataset_cleaned.csv --output models/model.pkl
+  deps:
+    - src/train.py
+    - data/processed/dataset_cleaned.csv
+  params:
+    - training.model_type
+    - training.test_size
+    - training.random_state
+    - training.cv_folds
+    - training.handle_imbalance
+    - training.imbalance_strategy
+    - training.model_params
+  outs:
+    - models/model.pkl
+    - models/model_info.json
+    - data/processed/test_data.csv
+
+evaluate:
+  cmd: python src/evaluate.py --model models/model.pkl --data data/processed/test_data.csv --output metrics
+  deps:
+    - src/evaluate.py
+    - models/model.pkl
+    - data/processed/test_data.csv
+  metrics:
+    - metrics/metrics.json:
+      cache: false
+  outs:
+    - reports/classification_report.txt

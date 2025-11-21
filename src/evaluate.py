@@ -84,7 +84,7 @@ def save_metrics(metrics: dict, report: str, output_dir: str):
     metrics_path = os.path.join(output_dir, 'metrics.json')
     with open(metrics_path, 'w') as f:
         json.dump(metrics, f, indent=2)
-    print(f"💾 Metrics saved to: {metrics_path}")
+    print(f"etrics saved to: {metrics_path}")
 
     report_path = os.path.join('report', 'classification_report.txt')
     os.makedirs(os.path.dirname(report_path), exist_ok=True)
