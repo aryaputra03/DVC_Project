@@ -1,0 +1,29 @@
+# DVC Classification Project - Requirements
+# Install: pip install -r requirements.txt
+
+# Data Version Control
+dvc[gdrive]==3.55.2
+
+# Data Processing
+pandas==2.2.2
+numpy==1.26.4
+scipy==1.13.1
+
+# Machine Learning
+scikit-learn==1.5.1
+imbalanced-learn==0.12.3
+xgboost==2.1.0
+
+# Model Serialization
+joblib==1.4.2
+
+# Visualization (optional)
+matplotlib==3.9.1
+seaborn==0.13.2
+
+# Testing
+pytest==8.2.2
+
+# Utilities
+pyyaml==6.0.1
+python-dotenv==1.0.1
