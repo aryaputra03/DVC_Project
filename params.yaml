@@ -1,0 +1,67 @@
+preprocessing:
+  missing_value_strategy_numerical: "median"
+  missing_value_strategy_categorical: "most_frequent"
+
+  skewed_features:
+  - "income"
+  - "transaction_amount"
+
+  skew_threshold: 1.0
+
+  scale_features: true
+
+  remove_outliers: false
+  outliers_threshold: 1.5
+
+training:
+  model_type: "random_forest"
+
+  test_size: 0.2
+  random_state: 42
+
+  cv_folds: 5
+
+  handle_imbalance: true
+  imbalance_strategy: "smote"
+
+  model_params:
+    random_forest:
+      n_estimators: 100
+      max_depth: 15
+      min_samples_split: 5
+      min_samples_leaf: 2
+    
+    xgboost:
+      n_estimators: 100
+      max_depth: 6
+      learning_rate: 0.1
+      subsample: 0.8
+      colsample_bytree: 0.8
+    
+    logistic_regression:
+      C: 1.0
+      max_iter: 1000
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - auc_roc
+
+data_generation:
+  n_rows: 10000
+  random_seed: 42
+
+  missing_severe: 0.30
+  missing_moderate_1: 0.15
+  missing_moderate_2: 0.12
+  missing_light_1: 0.08
+  missing_light_2: 0.05
+  missing_light_3: 0.05
+  missing_light_4: 0.03
+  missing_vlight_1: 0.02
+  missing_vlight_2: 0.02
+  missing_vlight_3: 0.01
+  
