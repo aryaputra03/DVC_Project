@@ -78,6 +78,7 @@ def scale_numerical_features(df: pd.DataFrame, params: dict)->pd.DataFrame:
         print(f"   - Scaled {len(numerical_cols)} numerical features")
     else:
         print("   - Scaling disabled in params")
+    return df_scaled
 
 def remove_outliers(df: pd.DataFrame, params: dict) -> pd.DataFrame:
     df_clean = df.copy()
