@@ -67,10 +67,13 @@ jobs:
         #     dvc remote add -d local_remote dvc_remote
         #     dvc remote list
 
-        - name: Generate dataset
+        - name: Generate dataset folders
           run: |
-            mkdir -p data/raw data/processed models metrics reports
-            python src/generate_data.py --rows 10000 --output data/raw/dataset.csv
+            New-Item -ItemType Directory -Force -Path data/raw
+            New-Item -ItemType Directory -Force -Path data/processed
+            New-Item -ItemType Directory -Force -Path models
+            New-Item -ItemType Directory -Force -Path metrics
+            New-Item -ItemType Directory -Force -Path reports
         
         - name: Run DVC Pipeline
           run: |
