@@ -65,31 +65,29 @@ jobs:
 
       - name: Prepare dataset
         run: |
-          echo "=== Files in data/raw ==="
-          ls -la data/raw/
-          
-          # Hapus file .dvc jika ada (tidak diperlukan karena data sudah ada)
           rm -f data/raw/dataset.csv.dvc 2>/dev/null || true
-          
-          # Jika data.csv ada tapi dataset.csv tidak ada, rename/copy
           if [ -f "data/raw/data.csv" ] && [ ! -f "data/raw/dataset.csv" ]; then
-            echo "Renaming data.csv to dataset.csv..."
             mv data/raw/data.csv data/raw/dataset.csv
           fi
-          
-          echo "=== After preparation ==="
           ls -la data/raw/
 
-      - name: Verify dataset exists
+      - name: Fix Windows paths in dvc.yaml
         run: |
-          if [ ! -f "data/raw/dataset.csv" ]; then
-            echo "❌ dataset.csv not found!"
-            exit 1
-          fi
-          echo "✓ dataset.csv found!"
-          echo "Lines: $(wc -l < data/raw/dataset.csv)"
-          echo "First 3 lines:"
-          head -3 data/raw/dataset.csv
+          echo "=== Before fix ==="
+          cat dvc.yaml
+          
+          # Replace Windows Python path with portable 'python'
+          sed -i 's|"D:/Python 3.11/python.exe"|python|g' dvc.yaml
+          sed -i "s|'D:/Python 3.11/python.exe'|python|g" dvc.yaml
+          sed -i 's|D:/Python 3.11/python.exe|python|g' dvc.yaml
+          
+          # Also fix any other common Windows paths
+          sed -i 's|"C:/.*python.exe"|python|g' dvc.yaml
+          sed -i 's|"D:/.*python.exe"|python|g' dvc.yaml
+          
+          echo ""
+          echo "=== After fix ==="
+          cat dvc.yaml
 
       - name: Run DVC Pipeline
         run: |
