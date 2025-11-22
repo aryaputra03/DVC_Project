@@ -63,16 +63,33 @@ jobs:
         run: |
           mkdir -p data/raw data/processed models metrics reports
 
+      - name: Prepare dataset
+        run: |
+          echo "=== Files in data/raw ==="
+          ls -la data/raw/
+          
+          # Hapus file .dvc jika ada (tidak diperlukan karena data sudah ada)
+          rm -f data/raw/dataset.csv.dvc 2>/dev/null || true
+          
+          # Jika data.csv ada tapi dataset.csv tidak ada, rename/copy
+          if [ -f "data/raw/data.csv" ] && [ ! -f "data/raw/dataset.csv" ]; then
+            echo "Renaming data.csv to dataset.csv..."
+            mv data/raw/data.csv data/raw/dataset.csv
+          fi
+          
+          echo "=== After preparation ==="
+          ls -la data/raw/
+
       - name: Verify dataset exists
         run: |
-          echo "=== Checking for dataset ==="
-          ls -la data/raw/
           if [ ! -f "data/raw/dataset.csv" ]; then
             echo "❌ dataset.csv not found!"
             exit 1
           fi
           echo "✓ dataset.csv found!"
-          wc -l data/raw/dataset.csv
+          echo "Lines: $(wc -l < data/raw/dataset.csv)"
+          echo "First 3 lines:"
+          head -3 data/raw/dataset.csv
 
       - name: Run DVC Pipeline
         run: |
