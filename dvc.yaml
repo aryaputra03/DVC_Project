@@ -15,7 +15,7 @@ stages:
       - data/processed/dataset_cleaned.csv
   
   train:
-    cmd: python src/train.py --input data/processed/dataset_cleaned.csv --output models/model.pkl
+    cmd: '"D:/Python 3.11/python.exe" src/train.py --input data/processed/dataset_cleaned.csv --output models/model.pkl'
     deps:
       - src/train.py
       - data/processed/dataset_cleaned.csv
@@ -33,7 +33,7 @@ stages:
       - data/processed/test_data.csv
 
   evaluate:
-    cmd: python src/evaluate.py --model models/model.pkl --data data/processed/test_data.csv --output metrics
+    cmd: '"D:/Python 3.11/python.exe" src/evaluate.py --model models/model.pkl --data data/processed/test_data.csv --output metrics'
     deps:
       - src/evaluate.py
       - models/model.pkl
@@ -42,4 +42,4 @@ stages:
       - metrics/metrics.json:
           cache: false
     outs:
-      - reports/classification_report.txt
+      - report/classification_report.txt

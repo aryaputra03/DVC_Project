@@ -35,7 +35,7 @@ def handle_missing_values(df: pd.DataFrame, params: dict)-> pd.DataFrame:
 
     return df_clean
 
-def trasnform_skewed_features(df: pd.DataFrame, params: dict)-> pd.Dataframe:
+def trasnform_skewed_features(df: pd.DataFrame, params: dict)-> pd.DataFrame:
     df_transformed = df.copy()
     skewed_features = params['preprocessing']['skewed_features']
     skew_threshold = params['preprocessing']['skew_threshold']

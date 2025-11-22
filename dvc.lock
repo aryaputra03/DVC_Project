@@ -1,0 +1,102 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocess.py --input data/raw/dataset.csv --output 
+      data/processed/dataset_cleaned.csv
+    deps:
+    - path: data/raw/dataset.csv
+      hash: md5
+      md5: aa54156e780eaa412916292123d0cf3e
+      size: 680302
+    - path: src/preprocess.py
+      hash: md5
+      md5: 7025f14324ccd9dd18262be1cf8324bc
+      size: 5491
+    params:
+      params.yaml:
+        preprocessing.missing_value_strategy_categorical: most_frequent
+        preprocessing.missing_value_strategy_numerical: median
+        preprocessing.remove_outliers: false
+        preprocessing.scale_features: true
+        preprocessing.skew_threshold: 1.0
+        preprocessing.skewed_features:
+        - income
+        - transaction_amount
+    outs:
+    - path: data/processed/dataset_cleaned.csv
+      hash: md5
+      md5: 058511212fcbac314d162b7c44c67242
+      size: 1999290
+  train:
+    cmd: '"D:/Python 3.11/python.exe" src/train.py --input data/processed/dataset_cleaned.csv
+      --output models/model.pkl'
+    deps:
+    - path: data/processed/dataset_cleaned.csv
+      hash: md5
+      md5: 058511212fcbac314d162b7c44c67242
+      size: 1999290
+    - path: src/train.py
+      hash: md5
+      md5: ff074e42c9858713b19989f22e0ff480
+      size: 6436
+    params:
+      params.yaml:
+        training.cv_folds: 5
+        training.handle_imbalance: true
+        training.imbalance_strategy: smote
+        training.model_params:
+          random_forest:
+            n_estimators: 100
+            max_depth: 15
+            min_samples_split: 5
+            min_samples_leaf: 2
+          xgboost:
+            n_estimators: 100
+            max_depth: 6
+            learning_rate: 0.1
+            subsample: 0.8
+            colsample_bytree: 0.8
+          logistic_regression:
+            C: 1.0
+            max_iter: 1000
+        training.model_type: random_forest
+        training.random_state: 42
+        training.test_size: 0.2
+    outs:
+    - path: data/processed/test_data.csv
+      hash: md5
+      md5: 87736de7e287a472cc3427d65d11b2ac
+      size: 548752
+    - path: models/model.pkl
+      hash: md5
+      md5: 0fedb4f985da8ff0e09a2f68f2fda78c
+      size: 15417961
+    - path: models/model_info.json
+      hash: md5
+      md5: 8388b3dc49f0d46baf97d2f25bf68709
+      size: 273
+  evaluate:
+    cmd: '"D:/Python 3.11/python.exe" src/evaluate.py --model models/model.pkl --data
+      data/processed/test_data.csv --output metrics'
+    deps:
+    - path: data/processed/test_data.csv
+      hash: md5
+      md5: 87736de7e287a472cc3427d65d11b2ac
+      size: 548752
+    - path: models/model.pkl
+      hash: md5
+      md5: 0fedb4f985da8ff0e09a2f68f2fda78c
+      size: 15417961
+    - path: src/evaluate.py
+      hash: md5
+      md5: 911883fed49eb7989cf3cdbaaccfdeb6
+      size: 4659
+    outs:
+    - path: metrics/metrics.json
+      hash: md5
+      md5: a45dc3752b4efbd00f27fe2c7a18854d
+      size: 402
+    - path: report/classification_report.txt
+      hash: md5
+      md5: 809e9f7d85b43e9dc6e974fa14c34662
+      size: 580
