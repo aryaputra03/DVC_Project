@@ -14,32 +14,32 @@ stages:
     outs:
       - data/processed/dataset_cleaned.csv
   
-train:
-  cmd: python src/train.py --input data/processed/dataset_cleaned.csv --output models/model.pkl
-  deps:
-    - src/train.py
-    - data/processed/dataset_cleaned.csv
-  params:
-    - training.model_type
-    - training.test_size
-    - training.random_state
-    - training.cv_folds
-    - training.handle_imbalance
-    - training.imbalance_strategy
-    - training.model_params
-  outs:
-    - models/model.pkl
-    - models/model_info.json
-    - data/processed/test_data.csv
+  train:
+    cmd: python src/train.py --input data/processed/dataset_cleaned.csv --output models/model.pkl
+    deps:
+      - src/train.py
+      - data/processed/dataset_cleaned.csv
+    params:
+      - training.model_type
+      - training.test_size
+      - training.random_state
+      - training.cv_folds
+      - training.handle_imbalance
+      - training.imbalance_strategy
+      - training.model_params
+    outs:
+      - models/model.pkl
+      - models/model_info.json
+      - data/processed/test_data.csv
 
-evaluate:
-  cmd: python src/evaluate.py --model models/model.pkl --data data/processed/test_data.csv --output metrics
-  deps:
-    - src/evaluate.py
-    - models/model.pkl
-    - data/processed/test_data.csv
-  metrics:
-    - metrics/metrics.json:
-      cache: false
-  outs:
-    - reports/classification_report.txt
+  evaluate:
+    cmd: python src/evaluate.py --model models/model.pkl --data data/processed/test_data.csv --output metrics
+    deps:
+      - src/evaluate.py
+      - models/model.pkl
+      - data/processed/test_data.csv
+    metrics:
+      - metrics/metrics.json:
+          cache: false
+    outs:
+      - reports/classification_report.txt
