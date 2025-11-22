@@ -50,12 +50,14 @@ jobs:
             python-version: '3.9'
             cache: 'pip'
         
-        - name: Install DVC core only
-          uses: pip install dvc
+        - name: Install DVC (core only)
+          run: |
+            python -m pip install --upgrade pip
+            pip install --upgrade pyjwt
+            pip install "dvc>=3.60"
 
         - name: install dependencies
           run: |
-            python -m pip install --upgrade pip
             pip install -r requirements.txt  
         
         # - name: Setup Local DVC Remote
