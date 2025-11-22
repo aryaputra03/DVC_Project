@@ -58,6 +58,61 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt  
         
+        - name: Setup Local DVC Remote
+          run: |
+            mkdir dvc_remote
+            dvc remote remove local_remote --force || echo "No existing remote"
+            dvc remote add -d local_remote dvc_remote
+            dvc remote list
+
+        - name: Generate dataset
+          run: |
+            mkdir -p data/raw data/processed models metrics reports
+            python src/generate_data.py --rows 10000 --output data/raw/dataset.csv
+        
+        - name: Run DVC Pipeline
+          run: |
+            dvc repro --force
+        
+        - name: Show metrics
+          run: |
+            echo "====== METRICS ======"
+            cat metrics/metrics.json
+            echo ""
+            echo "===== CLASSIFICATION REPORT ====="
+            cat reports/classification_report.txt
+
+        - name: Upload Model Artifact
+          uses: actions/upload-artifact@v4
+          with: 
+            name: trained-model 
+            path: |
+              models/model.pkl
+              models/model_info.json
+            retention-days: 30
+
+        - name: Upload Metrics Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: evaluation-metrics
+            path: |
+              metrics/metrics.json
+              reports/classification_report.txt
+            retention-days: 30
+          
+        - name: Upload Processed Data Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: processed-data
+            path: |
+              data/processed/dataset_cleaned.csv
+              data/processed/test_data.csv
+            retention-days: 7
+
+        # === NEW: DVC Push to Local Remote ===
+        - name: Push to Local DVC Remote
+          run: dvc push
+        
         # ----- Option 1: Pull dari Google Drive -----
       # Uncomment jika menggunakan Google Drive remote
       # - name: 🔑 Setup DVC Google Drive credentials
