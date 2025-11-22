@@ -66,9 +66,44 @@ jobs:
           mkdir -p data/raw data/processed models metrics reports
 
       # =====================================================
-      # Setup Google Drive Remote & Pull Data
+      # PENTING: Setup & Pull Data dari Google Drive
       # =====================================================
+      - name: Setup DVC Google Drive credentials
+        env:
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+        run: |
+          mkdir -p ~/.config/dvc
+          echo "$GDRIVE_CREDENTIALS_DATA" > ~/.config/dvc/gdrive-user-credentials.json
+          echo "✓ Credentials configured"
 
+      - name: Pull data from DVC remote
+        run: |
+          echo "=== Current DVC remote config ==="
+          dvc remote list
+          echo ""
+          echo "=== Pulling data from remote ==="
+          dvc pull -v
+          echo ""
+          echo "=== Verifying files ==="
+          ls -la data/raw/
+
+      - name: Verify dataset exists
+        run: |
+          if [ ! -f "data/raw/dataset.csv" ]; then
+            echo "❌ ERROR: dataset.csv not found!"
+            echo "Make sure you have:"
+            echo "  1. Configured Google Drive remote correctly"
+            echo "  2. Pushed data with 'dvc push' from local"
+            echo "  3. Added GDRIVE_CREDENTIALS_DATA secret"
+            exit 1
+          fi
+          echo "✓ dataset.csv found!"
+          echo "First 3 lines:"
+          head -3 data/raw/dataset.csv
+
+      # =====================================================
+      # Run Pipeline
+      # =====================================================
       - name: Run DVC Pipeline
         run: |
           dvc repro --force
@@ -108,6 +143,6 @@ jobs:
             data/processed/test_data.csv
           retention-days: 7
 
-      - name: Push to DVC Remote
+      - name: Push outputs to DVC Remote
         if: github.ref == 'refs/heads/main'
         run: dvc push
