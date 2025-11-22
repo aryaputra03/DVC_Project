@@ -99,7 +99,14 @@ jobs:
           cat metrics/metrics.json
           echo ""
           echo "===== CLASSIFICATION REPORT ====="
-          cat reports/classification_report.txt
+          # Check both possible locations
+          if [ -f "reports/classification_report.txt" ]; then
+            cat reports/classification_report.txt
+          elif [ -f "report/classification_report.txt" ]; then
+            cat report/classification_report.txt
+          else
+            echo "Classification report not found (skipping)"
+          fi
 
       - name: Upload Model Artifact
         uses: actions/upload-artifact@v4
@@ -117,6 +124,8 @@ jobs:
           path: |
             metrics/metrics.json
             reports/classification_report.txt
+            report/classification_report.txt
+          if-no-files-found: ignore
           retention-days: 30
         
       - name: Upload Processed Data Artifact
